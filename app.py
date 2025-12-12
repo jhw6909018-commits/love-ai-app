@@ -2,37 +2,37 @@ import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 
-# --- 0. API 設定 (直接置入) ---
-# ⚠️ 警告：請勿將包含此 Key 的程式碼上傳至公開 GitHub，建議部署時改用 st.secrets
+# --- 0. API 設定 ---
+# ⚠️ 注意：這是你的 API Key，請小心保管
 GOOGLE_API_KEY = "AIzaSyAOVCNW74yDY3MVRcyPfimFKr1Q4nnwXfI" 
 
 # 設定 Generative AI
 genai.configure(api_key=GOOGLE_API_KEY)
 
-# --- 1. 系統設定 (修正處：layout 改為 centered) ---
+# --- 1. 系統設定 (已修正為 centered) ---
 st.set_page_config(page_title="🚑 暈船急救站 | AI Love Auditor", page_icon="💔", layout="centered")
 
-# CSS 美化
+# CSS 美化設定 (黑紅配色 + VIP 區塊樣式)
 st.markdown("""
 <style>
     .stApp {background-color: #0e1117; color: #fff;}
     .report-box {background-color: #1f2937; padding: 20px; border-radius: 10px; border: 1px solid #374151; margin-top: 20px;}
     .vip-lock {border: 2px dashed #ffd700; padding: 20px; text-align: center; border-radius: 10px; background-color: #222; margin-top: 20px;}
     .stButton>button {width: 100%; font-weight: bold; border-radius: 8px; height: 50px;}
-    /* 隱藏預設選單以看起來更像 App */
+    /* 隱藏預設選單 */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
 
-# --- 2. 側邊欄設定 (僅保留 VIP 碼) ---
+# --- 2. 側邊欄設定 (VIP 解鎖功能) ---
 with st.sidebar:
     st.title("⚙️ 設定台")
     st.markdown("---")
     st.header("🔐 VIP 通道")
     vip_input = st.text_input("輸入解鎖碼 (VIP Code)", placeholder="購買後獲得...")
     
-    # 設定正確密碼 (可隨時更換)
+    # *** 設定正確密碼 (對應 Gumroad 的發貨內容) ***
     VALID_CODE = "LOVE2026" 
     is_vip = (vip_input == VALID_CODE)
     
@@ -41,8 +41,8 @@ with st.sidebar:
     else:
         st.info("🔒 目前為普通模式：僅顯示基礎分數")
         st.markdown("---")
-        # 這裡放你的付款連結
-        st.markdown("[👉 點此花 30 元購買 VIP 解鎖碼](https://你的付款連結.com)")
+        # 側邊欄的購買連結
+        st.markdown("[👉 點此花 1 美金購買 VIP 解鎖碼](https://eclipsed84.gumroad.com/l/umuvow)")
 
 # --- 3. 主程式邏輯 ---
 st.title("🚑 暈船急救站")
@@ -60,7 +60,7 @@ if uploaded_file:
         
         with st.spinner('AI 正在讀取空氣中的尷尬指數...'):
             try:
-                # 構建 Prompt
+                # 構建 Prompt (提示詞)
                 if is_vip:
                     # VIP 模式：完整分析
                     prompt = """
@@ -71,7 +71,7 @@ if uploaded_file:
                     4. 語氣要求：專業但帶點幽默，像個很懂人性的朋友。
                     """
                 else:
-                    # 免費模式：吊胃口
+                    # 免費模式：吊胃口 (Sales Copy)
                     prompt = """
                     你是一位毒舌評論家。請分析這張對話截圖：
                     1. 【暈船指數】：直接給出 0-100 的數字。
@@ -86,18 +86,21 @@ if uploaded_file:
                 st.subheader("📋 診斷報告")
                 st.write(response.text)
                 
-                # 再次引導付費 (Call to Action)
+                # 如果是免費版，顯示購買按鈕 (Call to Action)
                 if not is_vip:
                     st.markdown("""
                     <div class="vip-lock">
                         <h3 style="color: #ffd700;">🔒 進階分析已鎖定</h3>
                         <p>想看「對方潛台詞分析」與「必勝神回覆」？</p>
                         <p style="font-size: 0.9em; color: #aaa;">少喝一杯飲料，換回你的戀愛尊嚴。</p>
-                        <a href="https://你的付款連結.com" target="_blank" style="text-decoration: none;">
+                        
+                        <!-- 你的 Gumroad 購買按鈕 -->
+                        <a href="https://eclipsed84.gumroad.com/l/umuvow" target="_blank" style="text-decoration: none;">
                             <button style="background-color: #ffd700; color: black; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%;">
-                                🚀 取得 VIP 解鎖碼 (NT$30)
+                                🚀 取得 VIP 解鎖碼 (約 NT$32)
                             </button>
                         </a>
+                        
                     </div>
                     """, unsafe_allow_html=True)
 
