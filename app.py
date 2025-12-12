@@ -160,7 +160,7 @@ if uploaded_file:
     # 分析按鈕
     if st.button("💉 開始診斷 (Start Analysis)"):
         # 建立模型
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-1.5-flash-latest')
         
         # 模擬讀取進度條 (增加儀式感)
         progress_text = "AI 正在掃描對話..."
@@ -233,3 +233,4 @@ if uploaded_file:
 
             except Exception as e:
                 st.error(f"分析失敗，請重試。({e})")
+
